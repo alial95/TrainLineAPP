@@ -24,6 +24,11 @@ class TrainLineAPP:
         df = pd.DataFrame(data=stations, dtype='string')
         df = df.set_index('Station Name')
         return df
+    def get_station_data(self, station, df):
+        code = df.loc[station]['Station ID']
+        url = self.build_url(code)
+        data = self.get_response(url)
+        return data['departures']['all']
     def get_station(self, stations):
             stations = [x['Station Name'] for x in stations]
             while True:
@@ -42,23 +47,35 @@ class TrainLineAPP:
         station = self.get_station(stations)
         
         df = self.create_df(stations)
-        code = df.loc[station]['Station ID']
-        url = self.build_url(code)
-        data = self.get_response(url)
-        data = data['departures']['all']
+        data = self.get_station_data(station, df)
         for i in data:
             if i['platform'] == '2':
                 print(f'The next train on platform 2 is the {i["aimed_arrival_time"]} service to {i["destination_name"]}.')      #very basic functionality
                 break
         
-        
-        # def get_station_request(self, data):
+    
+    def get_station_request(self, stations):
+        station = self.get_station(stations)
+        df = self.create_df(stations)
+        data = self.get_station_data(station, df)
+        destination = input('Where would you like to go? ')
+        destinations = [x['destination_name'] for x in data]
+        if destination in destinations:
+            for train in data:
+                if train['destination_name'] == destination:
+                    print(f'The next train to {destination} is the {train["aimed_departure_time"]} service on platform {train["platform"]}')
+                    break
+        else:
+            print('You cant get to this station from here.')
+
+            
 
     
 
 
     def run(self):
         self.show_stations(self.station_ids)
+        self.get_station_request(self.station_ids)
 
 
 if __name__ == '__main__':
