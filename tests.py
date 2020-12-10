@@ -1,9 +1,11 @@
 import unittest
 import unittest
 import requests
-from unittest.mock import patch
+from io import StringIO
+from unittest.mock import patch, Mock, mock_open
 from app import TrainLineAPP
 from parse_csv import StationIDS
+import csv
 import json
 app = TrainLineAPP()
 S = StationIDS()
@@ -44,6 +46,15 @@ class TestParseLine(unittest.TestCase):
         expected_result = [['birmingham', 'BIR'], ['selly oak', 'SEL'], ['Moor St', 'MOR']]
         mapped_stations = S.make_pairs_names_ids(stations)
         self.assertEqual(mapped_stations, expected_result)
+    
+    @patch('csv.reader', return_value=['NEXT', ['Cwmbran', 'CWM', 'Meols Cop', 'MEC', '', '']])
+    def test_get_stations(self, mock_csv):
+        with patch('builtins.open') as mock_open:
+            expected_result = [['Cwmbran', 'CWM', 'Meols Cop', 'MEC']]
+            station_ids = S.get_stations('station_codes.csv')
+            self.assertEqual(station_ids, expected_result)
+
+
 
 if __name__ == '__main__':
     unittest.main()

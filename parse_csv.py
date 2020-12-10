@@ -45,18 +45,22 @@ class StationIDS:
         stations = list(map(self.mapper_2, (names), (codes)))
         return stations
 
-    def get_stations(self):
+    def get_stations(self, file):
         station_ids = []
-        with open('station_codes.csv') as p:
+        with open(file) as p:
             reader = csv.reader(p)
-            next(reader)
+            counter = 0
             for line in reader:
-                cleaned_line = self.parse_line(line)
-                if len(cleaned_line) == 0:             # At the bottom of the csv there are hundreds of empty lines, this removes them
-                    continue                           
+                if counter == 0:
+                    counter +=1
+                    continue
                 else:
-                    station_ids.append(cleaned_line)
-       
+                    counter += 1
+                    cleaned_line = self.parse_line(line)
+                    if len(cleaned_line) == 0:             # At the bottom of the csv there are hundreds of empty lines, this removes them
+                        continue                           
+                    else:
+                        station_ids.append(cleaned_line)
         return station_ids
         
     def map_ids_names(self, station_ids):
@@ -65,7 +69,7 @@ class StationIDS:
 
 
     def main(self):
-        stations = self.get_stations()
+        stations = self.get_stations('station_codes.csv')
         clean_stations = self.make_pairs_names_ids(stations)
         mapped_stations = self.map_ids_names(clean_stations)
         return mapped_stations
