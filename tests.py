@@ -38,7 +38,12 @@ class TestParseLine(unittest.TestCase):
         cleaned_line = S.parse_line(line)
         self.assertEqual(cleaned_line, expected_result)
         self.assertNotIn('', cleaned_line)
-
+    
+    def test_make_pairs(self):
+        stations = [['birmingham', 'BIR', 'selly oak', 'SEL', 'Moor St', 'MOR']]
+        expected_result = [['birmingham', 'BIR'], ['selly oak', 'SEL'], ['Moor St', 'MOR']]
+        mapped_stations = S.make_pairs_names_ids(stations)
+        self.assertEqual(mapped_stations, expected_result)
 
 if __name__ == '__main__':
     unittest.main()
