@@ -18,11 +18,11 @@ class StationIDS:
     def parse_line(self, line):
         lines = []
         for x in line:
-            if x == '':
+            if x == '':        # removes gaps from the csv file
                 continue
             else:
                 lines.append(x)
-        return lines
+        return lines               # returns a cleaned line with no gaps
     def make_pairs(self, lst):
         
         if len(lst) == 2:
@@ -52,8 +52,8 @@ class StationIDS:
             next(reader)
             for line in reader:
                 cleaned_line = self.parse_line(line)
-                if len(cleaned_line) == 0:
-                    continue
+                if len(cleaned_line) == 0:             # At the bottom of the csv there are hundreds of empty lines, this removes them
+                    continue                           
                 else:
                     station_ids.append(cleaned_line)
        
