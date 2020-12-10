@@ -24,21 +24,23 @@ class TrainLineAPP:
         df = pd.DataFrame(data=stations, dtype='string')
         df = df.set_index('Station Name')
         return df
-    def show_stations(self, stations):
-        def get_station(stations):
+    def get_station(self, stations):
             stations = [x['Station Name'] for x in stations]
-            try:
-                station = input('Please enter the name of the station: ')
-                if station in stations:
-                    return station
-                else:
-                    print('Please enter a valid station name')
-            except Exception as e:
-                return e
+            while True:
+                try:
+                    station = input('Please enter the name of the station: ')
+                    if station not in stations:
+                        print('Please enter a valid station name')
+                    else:
+                        return station
+                except Exception as e:
+                    return e
+    def show_stations(self, stations):
         for station in stations[:10]:                  
             for key, value in station.items():
                 print(f'Name: {value}')
-        station = get_station(stations)
+        station = self.get_station(stations)
+        
         df = self.create_df(stations)
         code = df.loc[station]['Station ID']
         url = self.build_url(code)
@@ -47,7 +49,10 @@ class TrainLineAPP:
         for i in data:
             if i['platform'] == '2':
                 print(f'The next train on platform 2 is the {i["aimed_arrival_time"]} service to {i["destination_name"]}.')      #very basic functionality
-                break 
+                break
+        
+        
+        # def get_station_request(self, data):
 
     
 
