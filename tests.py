@@ -51,7 +51,7 @@ class TestParseLine(unittest.TestCase):
     def test_get_stations(self, mock_csv):
         with patch('builtins.open') as mock_open:
             expected_result = [['Cwmbran', 'CWM', 'Meols Cop', 'MEC']]
-            station_ids = S.get_stations('station_codes.csv')
+            station_ids = S.get_stations('test.csv')
             self.assertEqual(station_ids, expected_result)
 
 
