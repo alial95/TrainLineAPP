@@ -110,10 +110,9 @@ class TrainLineAPP:
         
     
     def get_station_by_location(self):
-        stations = self.station_ids
-        df = self.create_df(stations)
-        address = self.get_response_location()
-        results = [x['address']['freeformAddress'] for x in address['results']]
+        def filter_location(data, station):
+            filtered = list(filter(lambda x: x['name'] == station, data['member']))
+            return filtered[0]['latitude'], filtered[0]['longitude']
         def display_results(query):
             # show the results of the query to the user 
             counter = 1
@@ -121,15 +120,17 @@ class TrainLineAPP:
                 print(f'{result}: {counter}')
                 counter += 1
             print('Here are the results from your query. Which location is the one youre after?')
-
+        # get the station ids, build a dataframe with them
+        stations = self.station_ids
+        df = self.create_df(stations)
+        address = self.get_response_location()
+        results = [x['address']['freeformAddress'] for x in address['results']]
         display_results(results)
         address_code = int(input('Enter the id number for your address: '))
-        def filter_location(data, station):
-            filtered = list(filter(lambda x: x['name'] == station, data['member']))
-            return filtered[0]['latitude'], filtered[0]['longitude']
-     
+
         user_lat = address['results'][address_code - 1]['position']['lat']
         user_longitude = address['results'][address_code - 1]['position']['lon']
+        
         transport_details = self.get_transportation_details(user_lat, user_longitude)
         print([x['name'] for x in transport_details['member']])
         station = input('which station would you like to travel from? ')

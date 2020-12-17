@@ -54,11 +54,14 @@ class TestParseLine(unittest.TestCase):
             expected_result = [['Cwmbran', 'CWM', 'Meols Cop', 'MEC']]
             station_ids = S.get_stations('test.csv')
             self.assertEqual(station_ids, expected_result)
-    
-    # def test_pandas_df(self):
-    #     data = [{'Station Name': 'Selly Oak', 'Station ID': 'SO'}, 
-    #     {'Station Name': 'Five Ways', 'Station ID': 'FW'}]
-    #     expected_df = pd.DataFrame(data=data, dtype='string').set_index('Station Name')
+    @patch('app.TrainLineAPP.get_response', return_value={'departures': {'all': 'data'}})
+    def test_get_station_data(self, mock_response):
+        data = [{'Station Name': 'Abbey Wood', 'Station ID': 'ABW'}, {'Station Name': 'Gainsborough Central', 'Station ID': 'GNB'}]
+        df = pd.DataFrame(data=data, dtype='string').set_index('Station Name')
+        station = 'Abbey Wood'
+        expected_result = 'data'
+        data = app.get_station_data(station, df)
+        self.assertEqual(data, expected_result)
     station = 'test'
     @patch('builtins.input', return_value=station)
     def test_display_destinations(self, mock_input):
@@ -71,7 +74,7 @@ class TestParseLine(unittest.TestCase):
         self.assertEqual(app.display_destinations(data), expected_result)
 
 
-        
+    
 
 
 
