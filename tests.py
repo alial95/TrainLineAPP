@@ -7,6 +7,7 @@ from app import TrainLineAPP
 from parse_csv import StationIDS
 import csv
 import json
+import pandas as pd
 app = TrainLineAPP()
 S = StationIDS()
 class TestResponse(unittest.TestCase):
@@ -53,6 +54,25 @@ class TestParseLine(unittest.TestCase):
             expected_result = [['Cwmbran', 'CWM', 'Meols Cop', 'MEC']]
             station_ids = S.get_stations('test.csv')
             self.assertEqual(station_ids, expected_result)
+    
+    # def test_pandas_df(self):
+    #     data = [{'Station Name': 'Selly Oak', 'Station ID': 'SO'}, 
+    #     {'Station Name': 'Five Ways', 'Station ID': 'FW'}]
+    #     expected_df = pd.DataFrame(data=data, dtype='string').set_index('Station Name')
+    station = 'test'
+    @patch('builtins.input', return_value=station)
+    def test_display_destinations(self, mock_input):
+        station = 'test'
+        data = [{'destination_name': 'birmingham', 'other_thing': 'not_needed'}, 
+        {'destination_name': 'leeds', 'other_thing': 'also_not_needed'},
+        {'destination_name': 'birmingham', 'other_thing': 'not_needed'}]
+        expected_list = set(['birmingham', 'leeds'])
+        expected_result = (station, expected_list)
+        self.assertEqual(app.display_destinations(data), expected_result)
+
+
+        
+
 
 
 
