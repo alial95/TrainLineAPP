@@ -8,6 +8,11 @@ from parse_csv import StationIDS
 import csv
 import json
 import pandas as pd
+from dotenv import load_dotenv
+import os
+load_dotenv()
+API_ID = os.getenv('API_ID_')
+KEY = os.getenv('KEY2')
 app = TrainLineAPP()
 S = StationIDS()
 class TestResponse(unittest.TestCase):
@@ -60,8 +65,12 @@ class TestParseLine(unittest.TestCase):
         df = pd.DataFrame(data=data, dtype='string').set_index('Station Name')
         station = 'Abbey Wood'
         expected_result = 'data'
+        expected_url = f'https://transportapi.com/v3/uk/train/station/ABW///timetable.json?app_id={API_ID}&app_key={KEY}&train_status=passenger'
         data = app.get_station_data(station, df)
+        mock_response.assert_called()
+        mock_response.assert_called_with(expected_url)
         self.assertEqual(data, expected_result)
+        
     station = 'test'
     @patch('builtins.input', return_value=station)
     def test_display_destinations(self, mock_input):
