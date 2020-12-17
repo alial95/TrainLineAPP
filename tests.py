@@ -71,8 +71,8 @@ class TestParseLine(unittest.TestCase):
         mock_response.assert_called_with(expected_url)
         self.assertEqual(data, expected_result)
         
-    station = 'test'
-    @patch('builtins.input', return_value=station)
+    
+    @patch('builtins.input', return_value='test')
     def test_display_destinations(self, mock_input):
         station = 'test'
         data = [{'destination_name': 'birmingham', 'other_thing': 'not_needed'}, 
@@ -81,6 +81,43 @@ class TestParseLine(unittest.TestCase):
         expected_list = set(['birmingham', 'leeds'])
         expected_result = (station, expected_list)
         self.assertEqual(app.display_destinations(data), expected_result)
+
+    @patch('app.TrainLineAPP.get_response', return_value='timetable')
+    @patch('app.TrainLineAPP.display_destinations', return_value=('station', set(['station1', 'station2'])))
+    def test_get_service_timetable(self, mock_display, mock_response):
+        data = [{'destination_name':'station', 'service_timetable': {'id': 'testing'}}]
+        service_timetable = app.get_service_timetable(data)
+        mock_response.assert_called_with('testing')
+        mock_response.assert_called()
+        self.assertEqual(service_timetable, mock_response.return_value)
+    
+    data = [{'train': 'train', 'destination_name': 'station', 'aimed_departure_time': '19:00', 'platform': 5}]
+    @patch('app.TrainLineAPP.get_station', return_value='station')
+    @patch('app.TrainLineAPP.create_df', return_value='test')
+    @patch('app.TrainLineAPP.get_station_data', return_value=data)
+    @patch('app.TrainLineAPP.display_destinations', return_value=('station', ['station']))
+    def test_get_station_request(self, mock_display_destinations, mock_get_station_data, mock_create_df, mock_get_station):
+        stations = ['test']
+        station = 'station'
+        df = 'test'
+        data = [{'train': 'train', 'destination_name': 'station', 'aimed_departure_time': '19:00', 'platform': 5}]
+        request = app.get_station_request(stations)
+        mock_get_station.assert_called_with(stations)
+        mock_display_destinations.assert_called_with(data)
+        mock_create_df.assert_called_with(stations)
+        mock_get_station_data.assert_called_with(station, df)
+    
+    def test_create_df(self):
+        stations = [{'Station Name': 'Abbey Wood', 'Station ID': 'ABW'}, {'Station Name': 'Selly Oak', 'Station ID': 'SO'}]
+        df = pd.DataFrame(data=stations, dtype='string').set_index('Station Name')
+        df_test = app.create_df(stations)
+        self.assertEqual(df.loc['Abbey Wood']['Station ID'], df_test.loc['Abbey Wood']['Station ID'])
+
+        
+        
+
+        
+
 
 
     
